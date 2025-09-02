@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useForm, type ControllerRenderProps } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -73,6 +73,7 @@ const AcademicYearsPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['academic_years'] });
       setDialogOpen(false);
+      form.reset();
     },
   });
 
@@ -112,7 +113,7 @@ const AcademicYearsPage: React.FC = () => {
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({ field }: { field: ControllerRenderProps<z.infer<typeof academicYearSchema>, "name"> }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
@@ -125,7 +126,7 @@ const AcademicYearsPage: React.FC = () => {
                 <FormField
                   control={form.control}
                   name="start_date"
-                  render={({ field }: { field: ControllerRenderProps<z.infer<typeof academicYearSchema>, "start_date"> }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Start Date</FormLabel>
                       <FormControl>
@@ -138,7 +139,7 @@ const AcademicYearsPage: React.FC = () => {
                 <FormField
                   control={form.control}
                   name="end_date"
-                  render={({ field }: { field: ControllerRenderProps<z.infer<typeof academicYearSchema>, "end_date"> }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>End Date</FormLabel>
                       <FormControl>
