@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,38 +18,56 @@ const teacherSchema = z.object({
   address: z.string().optional(),
   phone_number: z.string().optional(),
   qualification: z.string().optional(),
-  photo_url: z.string().optional(),
+  photo: z.instanceof(File).optional(),
 });
 
+type TeacherFormData = z.infer<typeof teacherSchema>;
+
+const uploadPhoto = async (photo: File) => {
+    const fileName = `${Date.now()}_${photo.name}`;
+    const { error } = await supabase.storage.from('avatars').upload(fileName, photo);
+    if (error) {
+        throw new Error(error.message);
+    }
+    const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(fileName);
+    return publicUrl;
+};
+
 const AddTeacherPage: React.FC = () => {
+    const [preview, setPreview] = useState<string | null>(null);
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (newTeacher: z.infer<typeof teacherSchema>) => {
+        mutationFn: async (newTeacher: TeacherFormData) => {
             const { data: { user } } = await supabase.auth.getUser();
             const { data: profile } = await supabase.from('profiles').select('school_id').eq('id', user?.id).single();
             if (!profile) throw new Error("Profile not found");
 
-            const { data, error } = await supabase
-                .from('teachers')
-                .insert([{ ...newTeacher, school_id: profile.school_id }]);
-
-            if (error) {
-                throw new Error(error.message);
+            let photo_url: string | undefined = undefined;
+            if (newTeacher.photo) {
+                photo_url = await uploadPhoto(newTeacher.photo);
             }
-            return data;
+
+            const { photo, ...teacherData } = newTeacher;
+
+            const { error } = await supabase
+                .from('teachers')
+                .insert([{ ...teacherData, school_id: profile.school_id, photo_url }]);
+
+            if (error) throw new Error(error.message);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['teachers'] });
             toast.success("Teacher added successfully!");
             form.reset();
+            setPreview(null);
         },
         onError: (error) => {
             toast.error(`Error: ${error.message}`);
         }
     });
 
-    const form = useForm<z.infer<typeof teacherSchema>>({
+    const form = useForm<TeacherFormData>({
         resolver: zodResolver(teacherSchema),
         defaultValues: {
             first_name: '',
@@ -62,7 +80,15 @@ const AddTeacherPage: React.FC = () => {
         },
     });
 
-    function onSubmit(values: z.infer<typeof teacherSchema>) {
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            form.setValue('photo', file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
+
+    function onSubmit(values: TeacherFormData) {
         mutation.mutate(values);
     }
 
@@ -72,9 +98,19 @@ const AddTeacherPage: React.FC = () => {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-8">
                     <div className="col-span-1">
-                        <div className="w-full h-64 bg-gray-200 border-2 border-dashed rounded-md flex items-center justify-center">
-                            <p className="text-gray-500">Photo Upload Placeholder</p>
-                        </div>
+                        <FormItem>
+                            <FormLabel>Teacher Photo</FormLabel>
+                            <FormControl>
+                                <Input type="file" accept="image/*" onChange={handlePhotoChange} />
+                            </FormControl>
+                            {preview && <img src={preview} alt="Photo preview" className="mt-4 w-full h-64 object-cover rounded-md" />}
+                            {!preview && (
+                                <div className="w-full h-64 mt-2 bg-gray-200 border-2 border-dashed rounded-md flex items-center justify-center">
+                                    <p className="text-gray-500">Photo Preview</p>
+                                </div>
+                            )}
+                            <FormMessage />
+                        </FormItem>
                     </div>
                     <div className="col-span-2 grid grid-cols-2 gap-4">
                         <FormField
