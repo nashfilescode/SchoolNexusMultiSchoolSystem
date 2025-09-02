@@ -15,7 +15,8 @@ import {
   BookUser,
   School,
   Briefcase,
-  Subscription,
+  Newspaper,
+  GraduationCap,
   Users2,
   BarChart,
   CreditCard,
@@ -69,6 +70,16 @@ const menuItems = {
           submenu: [{ title: 'Subject List', path: '/school-admin/subjects' }],
       },
       {
+        title: 'Academics',
+        icon: GraduationCap,
+        submenu: [
+            { title: 'Academic Years', path: '/school-admin/academics/years' },
+            { title: 'Terms', path: '/school-admin/academics/terms' },
+            { title: 'Classes', path: '/school-admin/academics/classes' },
+            { title: 'Subjects', path: '/school-admin/academics/subjects' },
+        ],
+      },
+      {
           title: 'Fees Collection',
           icon: DollarSign,
           submenu: [
@@ -111,7 +122,7 @@ const menuItems = {
     },
     {
         title: 'Subscription Management',
-        icon: Subscription,
+        icon: Newspaper,
         path: '/super-admin/subscriptions',
     },
     {
