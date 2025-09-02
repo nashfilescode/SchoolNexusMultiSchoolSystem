@@ -2,19 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-ro
 import SchoolAdminLayout from './components/layout/SchoolAdminLayout';
 import SuperAdminLayout from './components/layout/SuperAdminLayout';
 import DashboardPage from './pages/DashboardPage';
-import AddStudentPage from './pages/school-admin/students/AddStudentPage';
-import StudentListPage from './pages/school-admin/students/StudentListPage';
-import AddTeacherPage from './pages/school-admin/teachers/AddTeacherPage';
-import TeacherListPage from './pages/school-admin/teachers/TeacherListPage';
-import AcademicYearsPage from './pages/school-admin/academics/AcademicYearsPage';
-import TermsPage from './pages/school-admin/academics/TermsPage';
-import ClassesPage from './pages/school-admin/academics/ClassesPage';
-import SubjectsPage from './pages/school-admin/academics/SubjectsPage';
-import { Toaster } from 'sonner';
 
-import React from 'react';
-
-const navStyle: React.CSSProperties = {
+const navStyle = {
   position: 'absolute',
   top: '1rem',
   right: '1rem',
@@ -29,7 +18,6 @@ const navStyle: React.CSSProperties = {
 function App() {
   return (
     <Router>
-      <Toaster />
       <div style={navStyle}>
         <Link to="/school-admin/dashboard" style={{color: 'white'}}>School Admin</Link>
         <Link to="/super-admin/dashboard" style={{color: 'white'}}>Super Admin</Link>
@@ -40,18 +28,14 @@ function App() {
         {/* School Admin Routes */}
         <Route path="/school-admin" element={<SchoolAdminLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="students" element={<StudentListPage />} />
-          <Route path="students/add" element={<AddStudentPage />} />
+          <Route path="students" element={<DashboardPage />} />
+          <Route path="students/add" element={<DashboardPage />} />
           <Route path="students/profiles" element={<DashboardPage />} />
-          <Route path="teachers" element={<TeacherListPage />} />
-          <Route path="teachers/add" element={<AddTeacherPage />} />
+          <Route path="teachers" element={<DashboardPage />} />
+          <Route path="teachers/add" element={<DashboardPage />} />
           <Route path="classes" element={<DashboardPage />} />
           <Route path="classes/add" element={<DashboardPage />} />
           <Route path="subjects" element={<DashboardPage />} />
-          <Route path="academics/years" element={<AcademicYearsPage />} />
-          <Route path="academics/terms" element={<TermsPage />} />
-          <Route path="academics/classes" element={<ClassesPage />} />
-          <Route path="academics/subjects" element={<SubjectsPage />} />
           <Route path="fees/collect" element={<DashboardPage />} />
           <Route path="fees/history" element={<DashboardPage />} />
           <Route path="exams" element={<DashboardPage />} />
