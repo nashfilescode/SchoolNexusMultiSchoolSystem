@@ -2,6 +2,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-ro
 import SchoolAdminLayout from './components/layout/SchoolAdminLayout';
 import SuperAdminLayout from './components/layout/SuperAdminLayout';
 import DashboardPage from './pages/DashboardPage';
+import AcademicYearsPage from './pages/school-admin/academics/AcademicYearsPage';
+import TermsPage from './pages/school-admin/academics/TermsPage';
+import ClassesPage from './pages/school-admin/academics/ClassesPage';
+import SubjectsPage from './pages/school-admin/academics/SubjectsPage';
 
 import React from 'react';
 
@@ -38,6 +42,10 @@ function App() {
           <Route path="classes" element={<DashboardPage />} />
           <Route path="classes/add" element={<DashboardPage />} />
           <Route path="subjects" element={<DashboardPage />} />
+          <Route path="academics/years" element={<AcademicYearsPage />} />
+          <Route path="academics/terms" element={<TermsPage />} />
+          <Route path="academics/classes" element={<ClassesPage />} />
+          <Route path="academics/subjects" element={<SubjectsPage />} />
           <Route path="fees/collect" element={<DashboardPage />} />
           <Route path="fees/history" element={<DashboardPage />} />
           <Route path="exams" element={<DashboardPage />} />
